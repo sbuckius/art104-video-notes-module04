@@ -1,576 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Video Reflection Notes</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  :root {
-    --ink: #3b0a1f;
-    --paper: #fdf5f7;
-    --cream: #f7e8ee;
-    --accent: #8b1a3a;
-    --gold: #e8799a;
-    --muted: #9e6678;
-    --border: #e8c9d4;
-    --highlight: #fff0f4;
-  }
+:root {
+  --ink: #3b0a1f;
+  --paper: #fdf5f7;
+  --cream: #f7e8ee;
+  --accent: #8b1a3a;
+  --gold: #e8799a;
+  --muted: #9e6678;
+  --border: #e8c9d4;
+  --highlight: #fff0f4;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+header {
+  background: var(--ink); color: var(--paper);
+  padding: 36px 48px 32px; position: relative; overflow: hidden;
+}
+header::before { content:''; position:absolute; top:-60px; right:-60px; width:240px; height:240px; border-radius:50%; background:var(--accent); opacity:.12; }
+header::after  { content:''; position:absolute; bottom:-40px; left:120px; width:160px; height:160px; border-radius:50%; background:var(--gold); opacity:.08; }
+.header-label { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
+header h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,46px); font-weight:700; line-height:1.1; }
+header h1 em { font-style:italic; color:var(--gold); }
+.header-sub { margin-top:12px; font-size:14px; color:#aaa; max-width:560px; line-height:1.6; }
 
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-  }
+main { max-width:860px; margin:0 auto; padding:40px 24px 80px; }
 
-  /* ── HEADER ── */
-  header {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 36px 48px 32px;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 240px; height: 240px;
-    border-radius: 50%;
-    background: var(--accent);
-    opacity: 0.12;
-  }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: -40px; left: 120px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.08;
-  }
-  .header-label {
-    font-size: 10px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 10px;
-  }
-  header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 4vw, 46px);
-    font-weight: 700;
-    line-height: 1.1;
-  }
-  header h1 em {
-    font-style: italic;
-    color: var(--gold);
-  }
-  .header-sub {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #aaa;
-    max-width: 560px;
-    line-height: 1.6;
-  }
+.student-card { background:white; border:1px solid var(--border); border-radius:12px; padding:28px 32px; margin-bottom:32px; display:flex; gap:20px; flex-wrap:wrap; }
+.field-group { display:flex; flex-direction:column; gap:6px; flex:1; min-width:200px; }
+.field-group label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); font-weight:500; }
+.field-group input { border:none; border-bottom:2px solid var(--border); padding:8px 2px; font-family:'DM Sans',sans-serif; font-size:16px; color:var(--ink); background:transparent; outline:none; transition:border-color .2s; }
+.field-group input:focus { border-bottom-color:var(--accent); }
 
-  /* ── MAIN LAYOUT ── */
-  main {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
+/* ── SELECTION BANNER ── */
+.selection-banner {
+  background: white; border: 1px solid var(--border); border-radius:12px;
+  padding: 20px 28px; margin-bottom: 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.selection-info { display: flex; flex-direction: column; gap: 4px; }
+.selection-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.selection-count { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--ink); }
+.selection-count span { color: var(--accent); }
+.selection-hint { font-size: 13px; color: var(--muted); }
+.min-badge {
+  background: var(--cream); border: 1px solid var(--border); border-radius: 99px;
+  padding: 8px 18px; font-size: 13px; color: var(--muted); white-space: nowrap; transition: all .3s;
+}
+.min-badge.met { background: rgba(139,26,58,.08); border-color: var(--gold); color: var(--accent); font-weight: 500; }
 
-  /* ── STUDENT INFO ── */
-  .student-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 32px;
-    margin-bottom: 40px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
-    min-width: 200px;
-  }
-  .field-group label {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-weight: 500;
-  }
-  .field-group input {
-    border: none;
-    border-bottom: 2px solid var(--border);
-    padding: 8px 2px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    color: var(--ink);
-    background: transparent;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .field-group input:focus {
-    border-bottom-color: var(--accent);
-  }
+.progress-wrap { margin-bottom: 36px; }
+.progress-meta { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:8px; letter-spacing:1px; }
+.progress-track { height:4px; background:var(--cream); border-radius:99px; overflow:hidden; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--gold)); border-radius:99px; transition:width .5s ease; }
 
-  /* ── PROGRESS BAR ── */
-  .progress-wrap {
-    margin-bottom: 36px;
-  }
-  .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-  }
-  .progress-track {
-    height: 4px;
-    background: var(--cream);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--gold));
-    border-radius: 99px;
-    transition: width 0.5s ease;
-  }
+.video-card { background:white; border:1px solid var(--border); border-radius:16px; margin-bottom:24px; overflow:hidden; transition:box-shadow .3s; }
+.video-card:hover { box-shadow:0 8px 32px rgba(0,0,0,.08); }
+.video-card.completed { border-color:var(--gold); }
+.video-card.completed .card-header { background:linear-gradient(135deg,#1a1a2e 0%,#2a2040 100%); }
+.video-card.skipped { opacity: .55; }
+.video-card.skipped .card-header { background: #2a2a2a; }
 
-  /* ── VIDEO CARD ── */
-  .video-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    margin-bottom: 32px;
-    overflow: hidden;
-    transition: box-shadow 0.3s;
-  }
-  .video-card:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-  }
-  .video-card.completed {
-    border-color: var(--gold);
-  }
-  .video-card.completed .card-header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #2a2040 100%);
-  }
+.card-header { background:var(--ink); color:white; padding:18px 28px; display:flex; align-items:center; gap:16px; cursor:pointer; user-select:none; }
+.card-num { font-family:'Playfair Display',serif; font-size:32px; font-style:italic; color:var(--gold); opacity:.6; line-height:1; min-width:32px; }
+.card-title-wrap { flex:1; }
+.card-eyebrow { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:#888; margin-bottom:4px; }
+.card-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:400; }
+.card-status { font-size:11px; padding:4px 12px; border-radius:99px; border:1px solid #444; color:#888; white-space:nowrap; transition:all .3s; }
+.card-status.done { border-color:var(--gold); color:var(--gold); background:rgba(212,168,67,.1); }
+.card-status.skip { border-color:#555; color:#666; }
+.chevron { font-size:18px; color:#666; margin-left:8px; }
+.card-body { display:none; padding:28px 32px; }
+.card-body.open { display:block; }
 
-  .card-header {
-    background: var(--ink);
-    color: white;
-    padding: 20px 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .card-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px;
-    font-style: italic;
-    color: var(--gold);
-    opacity: 0.6;
-    line-height: 1;
-    min-width: 36px;
-  }
-  .card-title-wrap { flex: 1 }
-  .card-eyebrow {
-    font-size: 9px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #888;
-    margin-bottom: 4px;
-  }
-  .card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 400;
-  }
-  .card-status {
-    font-size: 11px;
-    padding: 4px 12px;
-    border-radius: 99px;
-    border: 1px solid #444;
-    color: #888;
-    white-space: nowrap;
-    transition: all 0.3s;
-  }
-  .card-status.done {
-    border-color: var(--gold);
-    color: var(--gold);
-    background: rgba(212,168,67,0.1);
-  }
-  .chevron {
-    font-size: 18px;
-    color: #666;
-    transition: transform 0.3s;
-    margin-left: 8px;
-  }
-  .card-body {
-    display: none;
-    padding: 28px 32px;
-  }
-  .card-body.open { display: block; }
-  .video-btn-wrap {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-  }
-  .btn-watch-video {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--accent);
-    color: white;
-    text-decoration: none;
-    padding: 14px 28px;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    transition: opacity 0.2s, transform 0.1s;
-    white-space: nowrap;
-  }
-  .btn-watch-video:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn-watch-video:active { transform: scale(0.97); }
-  .video-url-hint {
-    font-size: 12px;
-    color: var(--muted);
-    word-break: break-all;
-  }
+.video-btn-wrap { display:flex; align-items:center; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+.btn-watch-video { display:inline-flex; align-items:center; gap:10px; background:var(--accent); color:white; text-decoration:none; padding:13px 26px; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; transition:opacity .2s,transform .1s; white-space:nowrap; }
+.btn-watch-video:hover { opacity:.85; transform:translateY(-1px); }
+.video-url-hint { font-size:12px; color:var(--muted); word-break:break-all; }
 
-  /* ── BULLETS ── */
-  .bullets-label {
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 16px;
-    font-weight: 500;
-  }
-  .bullet-row {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    margin-bottom: 14px;
-  }
-  .bullet-type-select {
-    flex-shrink: 0;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    color: var(--muted);
-    background: var(--cream);
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    appearance: none;
-    width: 168px;
-  }
-  .bullet-type-select:focus { border-color: var(--accent); }
-  .bullet-input {
-    flex: 1;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--ink);
-    background: var(--highlight);
-    outline: none;
-    resize: vertical;
-    min-height: 44px;
-    transition: border-color 0.2s;
-    line-height: 1.5;
-  }
-  .bullet-input:focus { border-color: var(--accent); background: white; }
-  .bullet-dot {
-    width: 8px; height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 18px;
-  }
+.bullets-label { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:16px; font-weight:500; }
+.bullet-row { display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+.bullet-dot { width:8px; height:8px; background:var(--accent); border-radius:50%; flex-shrink:0; margin-top:18px; }
+.bullet-type-select { flex-shrink:0; border:1px solid var(--border); border-radius:8px; padding:10px; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--muted); background:var(--cream); outline:none; cursor:pointer; transition:border-color .2s; appearance:none; width:168px; }
+.bullet-type-select:focus { border-color:var(--accent); }
+.bullet-input { flex:1; border:1px solid var(--border); border-radius:8px; padding:10px 14px; font-family:'DM Sans',sans-serif; font-size:14px; color:var(--ink); background:var(--highlight); outline:none; resize:vertical; min-height:44px; transition:border-color .2s; line-height:1.5; }
+.bullet-input:focus { border-color:var(--accent); background:white; }
 
-  /* ── ACTIONS ── */
-  .card-actions {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-  }
-  .btn-done {
-    background: var(--ink);
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  .btn-done:hover { background: var(--accent); }
-  .btn-done:active { transform: scale(0.98); }
+.card-actions { margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+.btn-done { background:var(--ink); color:white; border:none; padding:12px 28px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; letter-spacing:1px; cursor:pointer; transition:background .2s; }
+.btn-done:hover { background:var(--accent); }
+.btn-skip { background:none; border:1px solid var(--border); color:var(--muted); padding:12px 20px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; transition:all .2s; }
+.btn-skip:hover { border-color:#aaa; color:var(--ink); }
+.btn-unskip { background:none; border:1px solid var(--border); color:var(--muted); padding:10px 20px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; transition:all .2s; margin:16px 0 0; }
+.btn-unskip:hover { border-color:var(--accent); color:var(--accent); }
 
-  /* ── EXPORT SECTION ── */
-  .export-section {
-    margin-top: 48px;
-    background: var(--ink);
-    border-radius: 16px;
-    padding: 36px 40px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  .export-text h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    margin-bottom: 6px;
-  }
-  .export-text p {
-    font-size: 13px;
-    color: #aaa;
-  }
-  .btn-export {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 16px 36px;
-    border-radius: 10px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    white-space: nowrap;
-  }
-  .btn-export:hover { opacity: 0.88; }
-  .btn-export:active { transform: scale(0.98); }
+/* ── BOTTOM BAR (sticky) ── */
+#bottomBar {
+  display: none; position: fixed; bottom:0; left:0; right:0;
+  background: var(--ink); color: white; padding: 14px 32px;
+  align-items: center; justify-content: space-between; z-index: 200;
+  box-shadow: 0 -4px 24px rgba(0,0,0,.25); font-family:'DM Sans',sans-serif;
+  font-size:13px; gap:16px; flex-wrap:wrap; transition:background .4s;
+}
+#bottomBar.visible { display: flex; }
+#bottomBar.met { background: #1a0d10; }
+#barCount { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); white-space:nowrap; }
+#barCount.met { color: #c8e6c9; }
+#barText { color: #aaa; }
+.btn-export-bar {
+  display: none; background:var(--accent); color:white; border:none;
+  padding:10px 22px; border-radius:8px; font-family:'DM Sans',sans-serif;
+  font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap; transition:background .2s;
+}
+.btn-export-bar:hover { background: #c2294f; }
+.btn-export-bar.visible { display: block; }
 
-  /* ── ADMIN PANEL ── */
-  .admin-toggle {
-    text-align: center;
-    margin-top: 32px;
-  }
-  .admin-toggle button {
-    background: none;
-    border: 1px dashed var(--border);
-    color: var(--muted);
-    padding: 8px 20px;
-    border-radius: 6px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    transition: all 0.2s;
-  }
-  .admin-toggle button:hover { border-color: var(--accent); color: var(--accent); }
+.export-section { margin-top:48px; background:var(--ink); border-radius:16px; padding:36px 40px; color:white; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+.export-text h2 { font-family:'Playfair Display',serif; font-size:24px; margin-bottom:6px; }
+.export-text p { font-size:13px; color:#aaa; }
+.btn-export { background:var(--accent); color:white; border:none; padding:16px 36px; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:500; cursor:pointer; transition:opacity .2s; white-space:nowrap; }
+.btn-export:hover { opacity:.88; }
 
-  /* Modal */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(59,10,31,0.5);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-box {
-    background: white;
-    border-radius: 16px;
-    padding: 36px 40px;
-    width: 340px;
-    box-shadow: 0 24px 64px rgba(59,10,31,0.2);
-    text-align: center;
-  }
-  .modal-icon { font-size: 32px; display: block; margin-bottom: 12px; }
-  .modal-header h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .modal-header p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-  .modal-input {
-    width: 100%;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: var(--ink);
-    outline: none;
-    text-align: center;
-    letter-spacing: 3px;
-    transition: border-color 0.2s;
-    margin-bottom: 8px;
-  }
-  .modal-input:focus { border-color: var(--accent); }
-  .modal-error { font-size: 12px; color: var(--accent); margin-bottom: 8px; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
-  .btn-modal-cancel {
-    flex: 1;
-    background: var(--cream);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 12px;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-modal-cancel:hover { background: var(--border); }
-  .btn-modal-enter {
-    flex: 1;
-    background: var(--accent);
-    border: none;
-    color: white;
-    padding: 12px;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .btn-modal-enter:hover { opacity: 0.85; }
+.admin-toggle { text-align:center; margin-top:32px; }
+.admin-toggle button { background:none; border:1px dashed var(--border); color:var(--muted); padding:8px 20px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:12px; cursor:pointer; letter-spacing:1px; transition:all .2s; }
+.admin-toggle button:hover { border-color:var(--accent); color:var(--accent); }
 
-  /* Admin panel */
-  .admin-panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-  }
-  .admin-panel-header h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: var(--ink);
-  }
-  .btn-admin-close {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 6px 14px;
-    border-radius: 6px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-admin-close:hover { border-color: var(--accent); color: var(--accent); }
-  .admin-hint { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
-  .admin-panel {
-    display: none;
-    margin-top: 20px;
-    background: white;
-    border: 1px dashed var(--border);
-    border-radius: 12px;
-    padding: 28px 32px;
-  }
-  .admin-panel.open { display: block; }
-  .admin-panel h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    margin-bottom: 20px;
-    color: var(--ink);
-  }
-  .admin-video-list { margin-bottom: 20px; }
-  .admin-video-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .admin-input {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--ink);
-    background: var(--cream);
-    outline: none;
-  }
-  .admin-input:focus { border-color: var(--accent); background: white; }
-  .admin-input.title-input { flex: 1; min-width: 140px; }
-  .admin-input.url-input { flex: 2; min-width: 200px; }
-  .btn-remove {
-    background: none;
-    border: 1px solid #ddd;
-    color: #aaa;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
-  }
-  .btn-remove:hover { border-color: var(--accent); color: var(--accent); }
-  .admin-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-  .btn-add-video {
-    background: var(--cream);
-    border: 1px solid var(--border);
-    color: var(--ink);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-add-video:hover { background: var(--highlight); border-color: var(--gold); }
-  .btn-apply {
-    background: var(--ink);
-    color: white;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .btn-apply:hover { background: var(--accent); }
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(59,10,31,.5); backdrop-filter:blur(4px); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal-box { background:white; border-radius:16px; padding:36px 40px; width:340px; box-shadow:0 24px 64px rgba(59,10,31,.2); text-align:center; }
+.modal-icon { font-size:32px; display:block; margin-bottom:12px; }
+.modal-header h3 { font-family:'Playfair Display',serif; font-size:20px; color:var(--ink); margin-bottom:6px; }
+.modal-header p { font-size:13px; color:var(--muted); margin-bottom:20px; }
+.modal-input { width:100%; border:2px solid var(--border); border-radius:8px; padding:12px 14px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--ink); outline:none; text-align:center; letter-spacing:3px; transition:border-color .2s; margin-bottom:8px; }
+.modal-input:focus { border-color:var(--accent); }
+.modal-error { font-size:12px; color:var(--accent); margin-bottom:8px; }
+.modal-actions { display:flex; gap:10px; margin-top:16px; }
+.btn-modal-cancel { flex:1; background:var(--cream); border:1px solid var(--border); color:var(--muted); padding:12px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px; cursor:pointer; transition:all .2s; }
+.btn-modal-cancel:hover { background:var(--border); }
+.btn-modal-enter { flex:1; background:var(--accent); border:none; color:white; padding:12px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:opacity .2s; }
+.btn-modal-enter:hover { opacity:.85; }
 
-  @media (max-width: 600px) {
-    header { padding: 28px 20px; }
-    main { padding: 28px 16px 60px; }
-    .card-header { padding: 16px 20px; }
-    .card-body { padding: 20px; }
-    .student-card { padding: 20px; }
-    .export-section { padding: 24px; }
-    .bullet-type-select { width: 130px; }
-  }
+.admin-panel { display:none; margin-top:20px; background:white; border:1px dashed var(--border); border-radius:12px; padding:28px 32px; }
+.admin-panel.open { display:block; }
+.admin-panel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.admin-panel-header h3 { font-family:'Playfair Display',serif; font-size:18px; color:var(--ink); }
+.btn-admin-close { background:none; border:1px solid var(--border); color:var(--muted); padding:6px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:12px; cursor:pointer; transition:all .2s; }
+.btn-admin-close:hover { border-color:var(--accent); color:var(--accent); }
+.admin-hint { font-size:13px; color:var(--muted); margin-bottom:18px; }
+.admin-video-list { margin-bottom:20px; }
+.admin-video-row { display:flex; gap:10px; margin-bottom:10px; align-items:center; flex-wrap:wrap; }
+.admin-input { border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--ink); background:var(--cream); outline:none; }
+.admin-input:focus { border-color:var(--accent); background:white; }
+.admin-input.title-input { flex:1; min-width:140px; }
+.admin-input.url-input { flex:2; min-width:200px; }
+.btn-remove { background:none; border:1px solid #ddd; color:#aaa; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:14px; transition:all .2s; }
+.btn-remove:hover { border-color:var(--accent); color:var(--accent); }
+.admin-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.btn-add-video { background:var(--cream); border:1px solid var(--border); color:var(--ink); padding:10px 20px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; transition:all .2s; }
+.btn-add-video:hover { background:var(--highlight); border-color:var(--gold); }
+.btn-apply { background:var(--ink); color:white; border:none; padding:10px 24px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; transition:background .2s; }
+.btn-apply:hover { background:var(--accent); }
+
+@media(max-width:600px){
+  header { padding:28px 20px; }
+  main { padding:28px 16px 80px; }
+  .card-header { padding:16px 20px; }
+  .card-body { padding:20px; }
+  .student-card { padding:20px; }
+  .export-section { padding:24px; }
+  .bullet-type-select { width:130px; }
+  #bottomBar { padding:12px 20px; }
+}
 </style>
 </head>
 <body>
@@ -578,40 +185,44 @@
 <header>
   <div class="header-label">Reality in a Digital Age</div>
   <h1>Video <em>Reflection</em><br>Notes</h1>
-  <p class="header-sub">Watch each video, then record three bullet points capturing what you learned, found interesting, were surprised by, disagreed with, or questioned.</p>
+  <p class="header-sub">Choose any <strong style="color:var(--gold)">5 videos</strong> from the list below. Watch each one, then record three bullet points capturing what you learned, found interesting, were surprised by, disagreed with, or questioned.</p>
 </header>
 
 <main>
-
-  <!-- Student Info -->
   <div class="student-card">
     <div class="field-group">
       <label>Your Name</label>
-      <input type="text" id="studentName" placeholder="First Last" />
+      <input type="text" id="studentName" placeholder="First Last"/>
     </div>
     <div class="field-group">
       <label>Date</label>
-      <input type="date" id="studentDate" />
+      <input type="date" id="studentDate"/>
     </div>
     <div class="field-group">
       <label>Class / Section (optional)</label>
-      <input type="text" id="studentClass" placeholder="e.g. Period 3" />
+      <input type="text" id="studentClass" placeholder="e.g. Period 3"/>
     </div>
   </div>
 
-  <!-- Progress -->
+  <div class="selection-banner">
+    <div class="selection-info">
+      <div class="selection-label">Your Selection</div>
+      <div class="selection-count"><span id="selCount">0</span> of 5 minimum completed</div>
+      <div class="selection-hint">Complete any 5 videos — you're welcome to do more.</div>
+    </div>
+    <div class="min-badge" id="minBadge">0 / 5 done</div>
+  </div>
+
   <div class="progress-wrap">
     <div class="progress-meta">
-      <span id="progressLabel">0 of 6 videos completed</span>
+      <span id="progressLabel">0 of 11 videos completed</span>
       <span id="progressPct">0%</span>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   </div>
 
-  <!-- Video Cards Container -->
   <div id="videoContainer"></div>
 
-  <!-- Export -->
   <div class="export-section">
     <div class="export-text">
       <h2>Ready to submit?</h2>
@@ -620,12 +231,10 @@
     <button class="btn-export" onclick="exportPDF()">⬇ Export as PDF</button>
   </div>
 
-  <!-- Admin Panel -->
   <div class="admin-toggle">
     <button onclick="promptAdmin()">⚙ Admin</button>
   </div>
 
-  <!-- Admin Login Modal -->
   <div class="modal-overlay" id="adminModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -633,7 +242,7 @@
         <h3>Admin Access</h3>
         <p>Enter the admin password to manage videos.</p>
       </div>
-      <input type="password" id="adminPasswordInput" class="modal-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkAdminPassword()" />
+      <input type="password" id="adminPasswordInput" class="modal-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkAdminPassword()"/>
       <div id="adminPasswordError" class="modal-error" style="display:none">Incorrect password. Try again.</div>
       <div class="modal-actions">
         <button class="btn-modal-cancel" onclick="closeAdminModal()">Cancel</button>
@@ -654,18 +263,29 @@
       <button class="btn-apply" onclick="applyAdminChanges()">Apply Changes</button>
     </div>
   </div>
-
 </main>
+
+<!-- sticky bottom bar -->
+<div id="bottomBar">
+  <span id="barText">Complete at least <strong style="color:var(--gold)">5 videos</strong> to finish the assignment.</span>
+  <span id="barCount">0 / 5 minimum</span>
+  <button class="btn-export-bar" id="exportBarBtn" onclick="exportPDF()">⬇ Export PDF</button>
+</div>
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────────────────
 let videos = [
-  { title: "Video 1", url: "https://www.youtube.com/watch?v=_aLztOU5McA" },
-  { title: "Video 2", url: "https://www.youtube.com/watch?v=q1hf26EEjb0" },
-  { title: "Video 3", url: "https://www.ted.com/talks/refik_anadol_art_in_the_age_of_machine_intelligence" },
-  { title: "Video 4", url: "https://www.youtube.com/watch?v=X-Gk___t8BA&t=24s" },
-  { title: "Video 5", url: "https://www.ted.com/talks/sam_gregory_when_ai_can_fake_reality_who_can_you_trust" },
-  { title: "Video 6", url: "https://www.ted.com/talks/eileen_isagon_skyers_in_the_age_of_ai_art_what_can_originality_look_like" },
+  { title: "Video 1",  url: "https://www.youtube.com/watch?v=RZdfE_7cde0" },
+  { title: "Video 2",  url: "https://www.youtube.com/watch?v=JXBBalHl_cI&t=7s" },
+  { title: "Video 3",  url: "https://www.youtube.com/watch?v=ikvrwOnay3g" },
+  { title: "Video 4",  url: "https://www.youtube.com/watch?v=_aLztOU5McA" },
+  { title: "Video 5",  url: "https://www.youtube.com/watch?v=q1hf26EEjb0" },
+  { title: "Video 6",  url: "https://www.ted.com/talks/refik_anadol_art_in_the_age_of_machine_intelligence" },
+  { title: "Video 7",  url: "https://www.youtube.com/watch?v=X-Gk___t8BA&t=24s" },
+  { title: "Video 8",  url: "https://www.ted.com/talks/sam_gregory_when_ai_can_fake_reality_who_can_you_trust" },
+  { title: "Video 9",  url: "https://www.ted.com/talks/eileen_isagon_skyers_in_the_age_of_ai_art_what_can_originality_look_like" },
+  { title: "Video 10", url: "https://www.youtube.com/watch?v=tlTKTTt47WE&t=1s" },
+  { title: "Video 11", url: "https://www.youtube.com/watch?v=L45Q1_psDqk" },
 ];
 
 const bulletTypes = [
@@ -676,338 +296,347 @@ const bulletTypes = [
   "Something that made me ask questions",
 ];
 
-// ── EMBED HELPERS ─────────────────────────────────────────────────────────────
-function getYouTubeId(url) {
-  const m = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-  return m ? m[1] : null;
-}
+const ADMIN_PASSWORD = 'teacher123';
+const MIN_REQUIRED = 5;
 
-function buildVideoEmbed(url, title) {
-  return `<div class="video-btn-wrap">
-    <a class="btn-watch-video" href="${url}" target="_blank" rel="noopener">
-      ▶ Watch Video
-    </a>
-    <span class="video-url-hint">${url}</span>
-  </div>`;
-}
-
-// ── RENDER CARDS ──────────────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderCards() {
   const container = document.getElementById('videoContainer');
   container.innerHTML = '';
-
   videos.forEach((v, i) => {
     const card = document.createElement('div');
     card.className = 'video-card';
-    card.id = `card-${i}`;
-
-    card.innerHTML = `
-      <div class="card-header" onclick="toggleCard(${i})">
-        <div class="card-num">${String(i+1).padStart(2,'0')}</div>
-        <div class="card-title-wrap">
-          <div class="card-eyebrow">Video ${i+1}</div>
-          <div class="card-title">${v.title}</div>
-        </div>
-        <div class="card-status" id="status-${i}">Not started</div>
-        <div class="chevron" id="chevron-${i}">▸</div>
-      </div>
-      <div class="card-body" id="body-${i}">
-        ${buildVideoEmbed(v.url, v.title)}
-        <div class="bullets-label">Your 3 Reflection Bullet Points</div>
-        ${[0,1,2].map(b => `
-        <div class="bullet-row">
-          <div class="bullet-dot"></div>
-          <select class="bullet-type-select" id="type-${i}-${b}">
-            <option value="">— Choose type —</option>
-            ${bulletTypes.map(t => `<option value="${t}">${t}</option>`).join('')}
-          </select>
-          <textarea class="bullet-input" id="bullet-${i}-${b}" placeholder="Write your reflection here…" rows="2" oninput="checkCompletion(${i})"></textarea>
-        </div>`).join('')}
-        <div class="card-actions">
-          <button class="btn-done" onclick="markDone(${i})">Mark Complete ✓</button>
-        </div>
-      </div>
-    `;
+    card.id = 'card-' + i;
+    card.innerHTML =
+      '<div class="card-header" onclick="toggleCard(' + i + ')">' +
+        '<div class="card-num">' + String(i+1).padStart(2,'0') + '</div>' +
+        '<div class="card-title-wrap">' +
+          '<div class="card-eyebrow">Video ' + (i+1) + '</div>' +
+          '<div class="card-title">' + escHtml(v.title) + '</div>' +
+        '</div>' +
+        '<div class="card-status" id="status-' + i + '">Not started</div>' +
+        '<div class="chevron" id="chevron-' + i + '">▸</div>' +
+      '</div>' +
+      '<div class="card-body" id="body-' + i + '">' +
+        '<div class="video-btn-wrap">' +
+          '<a class="btn-watch-video" href="' + escHtml(v.url) + '" target="_blank" rel="noopener">▶ Watch Video</a>' +
+          '<span class="video-url-hint">' + escHtml(v.url) + '</span>' +
+        '</div>' +
+        '<div class="bullets-label">Your 3 Reflection Bullet Points</div>' +
+        [0,1,2].map(function(b) {
+          return '<div class="bullet-row">' +
+            '<div class="bullet-dot"></div>' +
+            '<select class="bullet-type-select" id="type-' + i + '-' + b + '">' +
+              '<option value="">— Choose type —</option>' +
+              bulletTypes.map(function(t){ return '<option value="' + escHtml(t) + '">' + escHtml(t) + '</option>'; }).join('') +
+            '</select>' +
+            '<textarea class="bullet-input" id="bullet-' + i + '-' + b + '" placeholder="Write your reflection here…" rows="2" oninput="onBulletInput(' + i + ')"></textarea>' +
+          '</div>';
+        }).join('') +
+        '<div class="card-actions">' +
+          '<button class="btn-skip" onclick="skipCard(' + i + ')">Skip this video</button>' +
+          '<button class="btn-done" onclick="markDone(' + i + ')">Mark Complete ✓</button>' +
+        '</div>' +
+      '</div>';
     container.appendChild(card);
   });
-
   updateProgress();
 }
 
-// ── CARD INTERACTIONS ─────────────────────────────────────────────────────────
+// ── INTERACTIONS ──────────────────────────────────────────────────────────────
 function toggleCard(i) {
-  const body = document.getElementById(`body-${i}`);
-  const chevron = document.getElementById(`chevron-${i}`);
+  const body = document.getElementById('body-' + i);
+  const chev = document.getElementById('chevron-' + i);
   const isOpen = body.classList.contains('open');
-  // close all
-  document.querySelectorAll('.card-body').forEach(b => b.classList.remove('open'));
-  document.querySelectorAll('.chevron').forEach(c => c.textContent = '▸');
-  if (!isOpen) {
-    body.classList.add('open');
-    chevron.textContent = '▾';
-  }
+  document.querySelectorAll('.card-body').forEach(function(b){ b.classList.remove('open'); });
+  document.querySelectorAll('.chevron').forEach(function(c){ c.textContent = '▸'; });
+  if (!isOpen) { body.classList.add('open'); chev.textContent = '▾'; }
 }
 
-function checkCompletion(i) {
-  const filled = [0,1,2].every(b => document.getElementById(`bullet-${i}-${b}`).value.trim().length > 0);
-  const status = document.getElementById(`status-${i}`);
-  if (filled) {
+function onBulletInput(i) {
+  const status = document.getElementById('status-' + i);
+  const card = document.getElementById('card-' + i);
+  if (card.classList.contains('completed') || card.classList.contains('skipped')) return;
+  const anyFilled = [0,1,2].some(function(b){ return document.getElementById('bullet-' + i + '-' + b).value.trim().length > 0; });
+  if (anyFilled && status.textContent === 'Not started') {
     status.textContent = 'In progress';
-    status.classList.remove('done');
   }
 }
 
 function markDone(i) {
-  const filled = [0,1,2].every(b => document.getElementById(`bullet-${i}-${b}`).value.trim().length > 0);
-  if (!filled) {
-    alert('Please fill in all 3 bullet points before marking complete.');
-    return;
-  }
-  const card = document.getElementById(`card-${i}`);
-  const status = document.getElementById(`status-${i}`);
+  const filled = [0,1,2].every(function(b){ return document.getElementById('bullet-' + i + '-' + b).value.trim().length > 0; });
+  if (!filled) { alert('Please fill in all 3 bullet points before marking complete.'); return; }
+  const card = document.getElementById('card-' + i);
+  const status = document.getElementById('status-' + i);
+  card.classList.remove('skipped');
   card.classList.add('completed');
   status.textContent = '✓ Complete';
-  status.classList.add('done');
-  toggleCard(i); // collapse
+  status.className = 'card-status done';
+  toggleCard(i);
   updateProgress();
-  // auto-open next
-  if (i + 1 < videos.length) {
-    setTimeout(() => toggleCard(i+1), 300);
+  // auto-open next incomplete
+  for (let n = i+1; n < videos.length; n++) {
+    const nc = document.getElementById('card-' + n);
+    if (!nc.classList.contains('completed') && !nc.classList.contains('skipped')) {
+      setTimeout(function(){ toggleCard(n); }, 300);
+      break;
+    }
   }
+}
+
+function skipCard(i) {
+  const card = document.getElementById('card-' + i);
+  const status = document.getElementById('status-' + i);
+  card.classList.remove('completed');
+  card.classList.add('skipped');
+  status.textContent = 'Skipped';
+  status.className = 'card-status skip';
+  // add unskip button if not there
+  const body = document.getElementById('body-' + i);
+  if (!body.querySelector('.btn-unskip')) {
+    const unskipBtn = document.createElement('button');
+    unskipBtn.className = 'btn-unskip';
+    unskipBtn.textContent = '↩ Undo skip';
+    unskipBtn.onclick = function(){ unskipCard(i); };
+    body.appendChild(unskipBtn);
+  }
+  toggleCard(i);
+  updateProgress();
+}
+
+function unskipCard(i) {
+  const card = document.getElementById('card-' + i);
+  const status = document.getElementById('status-' + i);
+  card.classList.remove('skipped');
+  status.textContent = 'Not started';
+  status.className = 'card-status';
+  const body = document.getElementById('body-' + i);
+  const unskipBtn = body.querySelector('.btn-unskip');
+  if (unskipBtn) unskipBtn.remove();
+  updateProgress();
+  toggleCard(i);
 }
 
 function updateProgress() {
-  const done = document.querySelectorAll('.card-status.done').length;
+  const done = document.querySelectorAll('.video-card.completed').length;
   const total = videos.length;
-  const pct = total ? Math.round((done/total)*100) : 0;
-  document.getElementById('progressLabel').textContent = `${done} of ${total} videos completed`;
-  document.getElementById('progressPct').textContent = `${pct}%`;
+  const pct = total ? Math.round(done/total*100) : 0;
+
+  document.getElementById('progressLabel').textContent = done + ' of ' + total + ' videos completed';
+  document.getElementById('progressPct').textContent = pct + '%';
   document.getElementById('progressFill').style.width = pct + '%';
+
+  // selection banner
+  document.getElementById('selCount').textContent = done;
+  const badge = document.getElementById('minBadge');
+  if (done >= MIN_REQUIRED) {
+    badge.textContent = '✓ Minimum met!';
+    badge.classList.add('met');
+  } else {
+    badge.textContent = done + ' / ' + MIN_REQUIRED + ' done';
+    badge.classList.remove('met');
+  }
+
+  // bottom bar
+  const bar = document.getElementById('bottomBar');
+  const barCount = document.getElementById('barCount');
+  const barText = document.getElementById('barText');
+  const exportBtn = document.getElementById('exportBarBtn');
+  bar.classList.add('visible');
+  if (done >= MIN_REQUIRED) {
+    bar.classList.add('met');
+    barCount.textContent = '✓ ' + done + ' complete — minimum met!';
+    barCount.classList.add('met');
+    barText.innerHTML = done >= total
+      ? '<strong style="color:#c8e6c9">All ' + total + ' videos done — great work!</strong>'
+      : '<span>Minimum met! Keep going or you\'re done.</span>';
+    exportBtn.classList.add('visible');
+  } else {
+    bar.classList.remove('met');
+    barCount.textContent = done + ' / ' + MIN_REQUIRED + ' minimum';
+    barCount.classList.remove('met');
+    barText.innerHTML = 'Complete at least <strong style="color:var(--gold)">' + MIN_REQUIRED + ' videos</strong> to finish the assignment.';
+    exportBtn.classList.remove('visible');
+  }
 }
 
 // ── PDF EXPORT ────────────────────────────────────────────────────────────────
-async function exportPDF() {
+function exportPDF() {
   const name = document.getElementById('studentName').value.trim() || 'Student';
   const dateVal = document.getElementById('studentDate').value;
-  const dateStr = dateVal ? new Date(dateVal + 'T00:00:00').toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}) : new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  const dateStr = dateVal
+    ? new Date(dateVal + 'T00:00:00').toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})
+    : new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   const cls = document.getElementById('studentClass').value.trim();
 
-  const { jsPDF } = window.jspdf;
+  const jsPDF = window.jspdf.jsPDF;
   const doc = new jsPDF({ unit: 'pt', format: 'letter' });
-  const PW = doc.internal.pageSize.getWidth();
-  const PH = doc.internal.pageSize.getHeight();
-  const margin = 56;
-  const contentW = PW - margin * 2;
-  let y = 0;
+  const PW = 612, PH = 792;
+  const L = 54, R = 54;
+  const TW = PW - L - R; // 504pt — never changes
+  let y = 54;
 
-  function newPage() {
-    doc.addPage();
-    y = margin;
-    // footer on each page
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(160, 155, 145);
-    doc.text(name + '  ·  Video Reflection Notes', margin, PH - 28);
-    doc.text(dateStr, PW - margin, PH - 28, { align: 'right' });
+  function addPage() { doc.addPage(); y = 54; }
+  function need(h) { if (y + h > PH - 54) addPage(); }
+
+  // ALWAYS set font before splitting
+  function split(txt, sz, style) {
+    doc.setFont('helvetica', style || 'normal');
+    doc.setFontSize(sz);
+    return doc.splitTextToSize(String(txt || ''), TW);
   }
 
-  function checkY(needed) {
-    if (y + needed > PH - 56) newPage();
-  }
+  // ── Header ──
+  doc.setFillColor(59,10,31);
+  doc.rect(0,0,PW,110,'F');
+  doc.setFillColor(139,26,58);
+  doc.rect(0,0,6,110,'F');
+  doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(232,121,154);
+  doc.text('REALITY IN A DIGITAL AGE', L, 36);
+  doc.setFont('helvetica','bold'); doc.setFontSize(26); doc.setTextColor(250,248,243);
+  doc.text('Video Reflection Notes', L, 68);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(180,175,165);
+  const infoLine = [name, cls, dateStr].filter(Boolean).join('   \u00b7   ');
+  doc.text(infoLine, L, 94);
+  y = 130;
 
-  // ── Cover block ──
-  // dark header bar
-  doc.setFillColor(59, 10, 31);
-  doc.rect(0, 0, PW, 120, 'F');
-  // accent stripe
-  doc.setFillColor(139, 26, 58);
-  doc.rect(0, 0, 6, 120, 'F');
+  // ── Only completed videos ──
+  videos.forEach(function(v, i) {
+    const card = document.getElementById('card-' + i);
+    if (!card || !card.classList.contains('completed')) return;
 
-  doc.setFont('helvetica', 'italic');
-  doc.setFontSize(10);
-  doc.setTextColor(232, 121, 154);
-  doc.text('REALITY IN A DIGITAL AGE', margin, 44);
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(26);
-  doc.setTextColor(250, 248, 243);
-  doc.text('Video Reflection Notes', margin, 76);
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(11);
-  doc.setTextColor(180, 175, 165);
-  const infoLine = [name, cls, dateStr].filter(Boolean).join('   ·   ');
-  doc.text(infoLine, margin, 102);
-
-  y = 148;
-
-  // ── Videos ──
-  videos.forEach((v, i) => {
-    const bullets = [0,1,2].map(b => ({
-      type: document.getElementById(`type-${i}-${b}`)?.value || '',
-      text: document.getElementById(`bullet-${i}-${b}`)?.value.trim() || '(no response)',
-    }));
-
-    checkY(80);
-
-    // Video number badge + title
-    doc.setFillColor(59, 10, 31);
-    doc.roundedRect(margin, y, contentW, 42, 4, 4, 'F');
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.setTextColor(232, 121, 154);
-    doc.text(`${String(i+1).padStart(2,'0')}`, margin + 16, y + 27);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(250, 248, 243);
-    doc.text(v.title, margin + 52, y + 17);
-
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(180, 175, 165);
-    const shortUrl = v.url.length > 72 ? v.url.slice(0,72)+'…' : v.url;
-    doc.text(shortUrl, margin + 52, y + 32);
-
-    y += 54;
-
-    // Bullet points
-    bullets.forEach((b, bi) => {
-      const typeTag = b.type || 'Reflection';
-      // estimate height
-      const lines = doc.splitTextToSize(b.text, contentW - 90);
-      const blockH = Math.max(52, 28 + lines.length * 15);
-      checkY(blockH + 10);
-
-      // bullet container
-      doc.setFillColor(253, 240, 244);
-      doc.setDrawColor(232, 185, 200);
-      doc.roundedRect(margin, y, contentW, blockH, 4, 4, 'FD');
-
-      // accent dot
-      doc.setFillColor(139, 26, 58);
-      doc.circle(margin + 18, y + 20, 4, 'F');
-
-      // type tag
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8);
-      doc.setTextColor(158, 102, 120);
-      doc.text(typeTag.toUpperCase(), margin + 30, y + 23);
-
-      // bullet text
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(11);
-      doc.setTextColor(59, 10, 31);
-      doc.text(lines, margin + 30, y + 38);
-
-      y += blockH + 8;
+    const bullets = [0,1,2].map(function(b) {
+      return {
+        type: (document.getElementById('type-' + i + '-' + b) || {}).value || '',
+        text: (document.getElementById('bullet-' + i + '-' + b) || {}).value || ''
+      };
     });
 
-    y += 18;
+    // Pre-split all text before drawing anything
+    const lh11 = 11 * 1.4;
+    const lh8  = 8 * 1.35;
+    const pad  = 14;
+
+    const bData = bullets.map(function(b) {
+      doc.setFont('helvetica','bold'); doc.setFontSize(8);
+      const tagLines = doc.splitTextToSize((b.type || 'Reflection').toUpperCase(), TW);
+      doc.setFont('helvetica','normal'); doc.setFontSize(11);
+      const bodyLines = doc.splitTextToSize(b.text || '(no response)', TW);
+      const boxH = Math.max(52, pad + tagLines.length * lh8 + 6 + bodyLines.length * lh11 + pad);
+      return { tagLines, bodyLines, boxH };
+    });
+
+    const totalH = 52 + bData.reduce(function(sum, d){ return sum + d.boxH + 8; }, 0) + 16;
+    need(totalH);
+
+    // Video title bar
+    doc.setFillColor(59,10,31);
+    doc.roundedRect(L-6, y, TW+12, 38, 4, 4, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(232,121,154);
+    doc.text(String(i+1).padStart(2,'0'), L+10, y+25);
+    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(250,248,243);
+    doc.text(v.title, L+46, y+15);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(180,175,165);
+    const shortUrl = v.url.length > 70 ? v.url.slice(0,70) + '\u2026' : v.url;
+    doc.text(shortUrl, L+46, y+29);
+    y += 48;
+
+    // Bullet boxes
+    bData.forEach(function(d, bi) {
+      need(d.boxH + 8);
+      doc.setFillColor(253,240,244);
+      doc.setDrawColor(232,185,200);
+      doc.roundedRect(L-6, y, TW+12, d.boxH, 4, 4, 'FD');
+      // accent left bar
+      doc.setFillColor(139,26,58);
+      doc.roundedRect(L-6, y, 4, d.boxH, 2, 2, 'F');
+      // dot
+      doc.setFillColor(139,26,58);
+      doc.circle(L+14, y+pad+lh8*0.5, 3, 'F');
+      // tag label
+      doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(158,102,120);
+      doc.text(d.tagLines, L+24, y+pad+lh8*0.75);
+      // body
+      doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(59,10,31);
+      doc.text(d.bodyLines, L+24, y+pad+d.tagLines.length*lh8+6+lh11*0.8);
+      y += d.boxH + 8;
+    });
+    y += 16;
   });
 
-  // page numbers
+  // Page numbers + footers
   const totalPages = doc.internal.getNumberOfPages();
   for (let p = 1; p <= totalPages; p++) {
     doc.setPage(p);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
-    doc.setTextColor(160, 155, 145);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(160,155,145);
     if (p > 1) {
-      doc.text(name + '  ·  Video Reflection Notes', margin, PH - 28);
-      doc.text(dateStr, PW - margin, PH - 28, { align: 'right' });
+      doc.text(name + '  \u00b7  Video Reflection Notes', L, PH-28);
+      doc.text(dateStr, PW-R, PH-28, {align:'right'});
     }
-    doc.text(`Page ${p} of ${totalPages}`, PW/2, PH - 28, { align: 'center' });
+    doc.text('Page ' + p + ' of ' + totalPages, PW/2, PH-28, {align:'center'});
   }
 
-  const filename = `${name.replace(/\s+/g,'_')}_Video_Reflections.pdf`;
-  doc.save(filename);
+  doc.save((name.replace(/\s+/g,'_')) + '_Video_Reflections.pdf');
 }
 
-// ── ADMIN PANEL ───────────────────────────────────────────────────────────────
-const ADMIN_PASSWORD = 'teacher123'; // ← change this password
-
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
 function promptAdmin() {
   document.getElementById('adminPasswordInput').value = '';
   document.getElementById('adminPasswordError').style.display = 'none';
   document.getElementById('adminModal').classList.add('open');
-  setTimeout(() => document.getElementById('adminPasswordInput').focus(), 100);
+  setTimeout(function(){ document.getElementById('adminPasswordInput').focus(); }, 100);
 }
-
-function closeAdminModal() {
-  document.getElementById('adminModal').classList.remove('open');
-}
-
+function closeAdminModal() { document.getElementById('adminModal').classList.remove('open'); }
 function checkAdminPassword() {
   const val = document.getElementById('adminPasswordInput').value;
-  if (val === ADMIN_PASSWORD) {
-    closeAdminModal();
-    openAdminPanel();
-  } else {
+  if (val === ADMIN_PASSWORD) { closeAdminModal(); openAdminPanel(); }
+  else {
     document.getElementById('adminPasswordError').style.display = 'block';
     document.getElementById('adminPasswordInput').value = '';
     document.getElementById('adminPasswordInput').focus();
   }
 }
-
-function openAdminPanel() {
-  renderAdminRows();
-  document.getElementById('adminPanel').classList.add('open');
-}
-
-function closeAdminPanel() {
-  document.getElementById('adminPanel').classList.remove('open');
-}
-
+function openAdminPanel() { renderAdminRows(); document.getElementById('adminPanel').classList.add('open'); }
+function closeAdminPanel() { document.getElementById('adminPanel').classList.remove('open'); }
 function renderAdminRows() {
   const list = document.getElementById('adminVideoList');
   list.innerHTML = '';
-  videos.forEach((v, i) => {
-    list.appendChild(makeAdminRow(v.title, v.url, i));
-  });
+  videos.forEach(function(v, i){ list.appendChild(makeAdminRow(v.title, v.url, i)); });
 }
-
 function makeAdminRow(title, url, i) {
   const row = document.createElement('div');
   row.className = 'admin-video-row';
-  row.dataset.index = i;
-  row.innerHTML = `
-    <input class="admin-input title-input" type="text" placeholder="Video title" value="${title.replace(/"/g,'&quot;')}" />
-    <input class="admin-input url-input" type="text" placeholder="https://..." value="${url.replace(/"/g,'&quot;')}" />
-    <button class="btn-remove" onclick="this.parentElement.remove()" title="Remove">✕</button>
-  `;
+  row.innerHTML =
+    '<input class="admin-input title-input" type="text" placeholder="Video title" value="' + escHtml(title) + '"/>' +
+    '<input class="admin-input url-input" type="text" placeholder="https://..." value="' + escHtml(url) + '"/>' +
+    '<button class="btn-remove" onclick="this.parentElement.remove()">✕</button>';
   return row;
 }
-
 function addAdminRow() {
   const list = document.getElementById('adminVideoList');
-  const i = list.children.length;
-  list.appendChild(makeAdminRow(`Video ${i+1}`, '', i));
+  list.appendChild(makeAdminRow('Video ' + (list.children.length+1), '', list.children.length));
 }
-
 function applyAdminChanges() {
   const rows = document.querySelectorAll('.admin-video-row');
   const newVideos = [];
-  rows.forEach(row => {
+  rows.forEach(function(row){
     const inputs = row.querySelectorAll('input');
-    const title = inputs[0].value.trim();
-    const url = inputs[1].value.trim();
-    if (title && url) newVideos.push({ title, url });
+    const title = inputs[0].value.trim(), url = inputs[1].value.trim();
+    if (title && url) newVideos.push({title, url});
   });
-  if (newVideos.length === 0) {
-    alert('Please add at least one video with a title and URL.');
-    return;
-  }
+  if (!newVideos.length) { alert('Please add at least one video.'); return; }
   videos = newVideos;
   renderCards();
   closeAdminPanel();
 }
 
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.getElementById('studentDate').valueAsDate = new Date();
 renderCards();
-// Open first card by default
 toggleCard(0);
 </script>
 </body>
